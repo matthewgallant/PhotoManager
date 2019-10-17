@@ -2,6 +2,7 @@
 """
 Photo Manager
 A simple program for choosing whether or not to keep an image in a set of images.
+Version 1.1
 
 (c) 2019 Matthew Gallant
 Licensed under the MIT license, check LICENSE.md for more info
@@ -33,6 +34,7 @@ class PhotoCollectorMain(QMainWindow):
         self.currentPosition = 0     
         self.allImages = []  
         self.imageWidth = 400
+        self.saveLocation = ""
 
         # Check If Windows Because The Menubar Takes Up Extra Space
         if (platform.system() != 'Darwin'):
@@ -117,9 +119,11 @@ class PhotoCollectorMain(QMainWindow):
         # Disable Button Until Image Load
         self.disableMenuItems()
 
-
         # Build Window
-        self.resize(400, 100)
+        if (platform.system() == "Windows"):
+            self.resize(800, 200)
+        else:
+            self.resize(400, 100)
 
         # Image Window
         self.imageLabel = QLabel(self)
@@ -136,7 +140,7 @@ class PhotoCollectorMain(QMainWindow):
         if (platform.system() == 'Darwin'):
             self.loadLabel.move((x1 / 2) - (x2 / 2), (y1 / 2) - (y2 / 2) - 12)
         else:
-            self.loadLabel.move(50, self.modifier + 15)
+            self.loadLabel.move(250, self.modifier + 70)
 
         # Init Window Settings
         self.centerWindow()
@@ -144,11 +148,14 @@ class PhotoCollectorMain(QMainWindow):
         self.show()
 
     def loadImages(self):
+
+        # Show Info
+        QMessageBox.information(self, 'Choose Photos', "In The Next Window, Please Choose The Folder With The Photos You Wish To Sort.", QMessageBox.Ok)
         
         # Open File Dialog
         folderName = QFileDialog.getExistingDirectory(self, 'Open Images Folder')
 
-        # Check If Folder Was Selectedd
+        # Check If Folder Was Selected
         if (folderName != ""):
 
             # Collect Image Names
@@ -171,24 +178,36 @@ class PhotoCollectorMain(QMainWindow):
 
             if (len(self.allImages) > 0):
 
-                # Create Folders
-                if(os.path.exists("Keep") or os.path.exists("Discard")):
-                    QMessageBox.information(self, 'Save Location Exists', "Please Delete The 'Keep' and 'Discard' Directories To Continue.", QMessageBox.Ok)
-                else:
+                # Show Info
+                QMessageBox.information(self, 'Choose Destination', "In The Next Window, Please Choose Where To Save The Sorted Photos.", QMessageBox.Ok)
+                
+                # Open File Dialog
+                destinationName = QFileDialog.getExistingDirectory(self, 'Open Destination Folder')
 
-                    # Create Save Directories
-                    os.makedirs("Keep")
-                    os.makedirs("Discard")
+                # Check If Folder Was Selected
+                if (destinationName != ""):
 
-                    # Load Image Into Window
-                    self.currentPosition = 0
-                    self.updateImage(self.allImages[self.currentPosition])
+                    # Create Folders
+                    if(os.path.exists(destinationName + "/Keep") or os.path.exists(destinationName + "/Discard")):
+                        QMessageBox.information(self, 'Save Location Already Exists', "Please Delete The 'Keep' and 'Discard' Directories To Continue.", QMessageBox.Ok)
+                    else:
 
-                    # Adjust Window Settings
-                    self.loadLabel.setVisible(False)
+                        # Set Save Location
+                        self.saveLocation = destinationName
 
-                    # Adjust Menu Settings
-                    self.enableMenuItems()
+                        # Create Save Directories
+                        os.makedirs(destinationName + "/Keep")
+                        os.makedirs(destinationName + "/Discard")
+
+                        # Load Image Into Window
+                        self.currentPosition = 0
+                        self.updateImage(self.allImages[self.currentPosition])
+
+                        # Adjust Window Settings
+                        self.loadLabel.setVisible(False)
+
+                        # Adjust Menu Settings
+                        self.enableMenuItems()
 
             else:
                 QMessageBox.information(self, 'No Images Found', "No Images Found in Folder", QMessageBox.Ok)
@@ -211,7 +230,7 @@ class PhotoCollectorMain(QMainWindow):
     def keepImage(self):
         
         # Keep Image
-        copyfile(self.allImages[self.currentPosition], "Keep/" + os.path.basename(self.allImages[self.currentPosition]))
+        copyfile(self.allImages[self.currentPosition], self.saveLocation + "/Keep/" + os.path.basename(self.allImages[self.currentPosition]))
 
         # Update Image Window
         if (self.currentPosition + 1 <= len(self.allImages) - 1):
@@ -224,7 +243,7 @@ class PhotoCollectorMain(QMainWindow):
     def discardImage(self):
 
         # Discard Image
-        copyfile(self.allImages[self.currentPosition], "Discard/" + os.path.basename(self.allImages[self.currentPosition]))
+        copyfile(self.allImages[self.currentPosition], self.saveLocation + "/Discard/" + os.path.basename(self.allImages[self.currentPosition]))
 
         # Update Image Window
         if (self.currentPosition + 1 <= len(self.allImages) - 1):
@@ -279,7 +298,13 @@ class PhotoCollectorMain(QMainWindow):
         self.twelveHundredAction.setDisabled(True)
 
     def resetMainWindow(self):
-        self.resize(400, 100)
+        if (platform.system() == "Windows"):
+            self.resize(800, 200)
+        else:
+            self.resize(400, 100)
+        
+        self.centerWindow()
+            
         self.loadLabel.setVisible(True)
         self.imageLabel.clear()
         self.disableMenuItems()
@@ -326,7 +351,7 @@ class AboutWindow(QWidget):
         self.imageLabel.setAlignment(Qt.AlignCenter)
 
         # Create Text Field Titles
-        self.versionLabel = QLabel("Version 1.0")
+        self.versionLabel = QLabel("Version 1.1")
         self.copyrightLabel = QLabel("<a href='https://matthewgallant.me'>\u00A9 2019 Matthew Gallant</a>")
 
         self.versionLabel.setAlignment(Qt.AlignCenter)
@@ -359,4 +384,21 @@ class AboutWindow(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = PhotoCollectorMain()
+    
+    # Set Window Icon On Windows
+    if (platform.system() == "Windows"):
+    
+        # Get Current Folder
+        if getattr(sys, 'frozen', False):
+            application_path = sys._MEIPASS
+        elif __file__:
+            application_path = os.path.dirname(__file__)
+        
+        # Get Image File
+        icon_image = os.path.join(application_path, 'icon.ico')
+
+        # Set Image File
+        app.setWindowIcon(QIcon(icon_image))
+        ex.setWindowIcon(QIcon(icon_image))
+    
     sys.exit(app.exec_())
