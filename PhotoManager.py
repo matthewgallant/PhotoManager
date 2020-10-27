@@ -2,7 +2,7 @@
 """
 Photo Manager
 A simple program for choosing whether or not to keep an image in a set of images.
-Version 1.1
+Version 1.2
 
 (c) 2019 Matthew Gallant
 Licensed under the MIT license, check LICENSE.md for more info
@@ -37,7 +37,7 @@ class PhotoCollectorMain(QMainWindow):
         self.saveLocation = ""
 
         # Check If Windows Because The Menubar Takes Up Extra Space
-        if (platform.system() != 'Darwin'):
+        if (platform.system() == 'Windows'):
             self.modifier = 40
         else:
             self.modifier = 0
@@ -51,7 +51,6 @@ class PhotoCollectorMain(QMainWindow):
         
         # Init Menubar
         menubar = self.menuBar()
-
 
         # Init File Menu
         fileMenu = menubar.addMenu('File')
@@ -122,16 +121,23 @@ class PhotoCollectorMain(QMainWindow):
         # Build Window
         if (platform.system() == "Windows"):
             self.resize(800, 200)
-        else:
+        elif (platform.system() == "Darwin"):
             self.resize(400, 100)
+        else:
+            self.resize(600, 300)
+
+        centralWidget = QWidget(self)
+        self.setCentralWidget(centralWidget)
 
         # Image Window
-        self.imageLabel = QLabel(self)
+        self.imageLabel = QLabel(centralWidget)
 
         # Open Folder Text Label
-        self.loadLabel = QLabel(self)
+        self.loadLabel = QLabel(centralWidget)
         self.loadLabel.setText('Please Open An Image Folder')
         self.loadLabel.adjustSize()
+
+        # Get Frame Information
         x1 = self.frameGeometry().width()
         y1 = self.frameGeometry().height()
         x2 = self.loadLabel.frameGeometry().width()
@@ -139,8 +145,10 @@ class PhotoCollectorMain(QMainWindow):
 
         if (platform.system() == 'Darwin'):
             self.loadLabel.move((x1 / 2) - (x2 / 2), (y1 / 2) - (y2 / 2) - 12)
-        else:
+        elif (platform.system() == 'Windows'):
             self.loadLabel.move(250, self.modifier + 70)
+        else:
+            self.loadLabel.move(215, 125)
 
         # Init Window Settings
         self.centerWindow()
@@ -300,8 +308,10 @@ class PhotoCollectorMain(QMainWindow):
     def resetMainWindow(self):
         if (platform.system() == "Windows"):
             self.resize(800, 200)
-        else:
+        elif (platform.system() == "Darwin"):
             self.resize(400, 100)
+        else:
+            self.resize(600, 300)
         
         self.centerWindow()
             
@@ -328,8 +338,10 @@ class AboutWindow(QWidget):
             palette.setColor(self.backgroundRole(), Qt.white)
             self.setPalette(palette)
             self.setFixedSize(400, 550)
-        else:
+        elif (platform.system() == "Darwin"):
             self.setFixedSize(300, 375)
+        else:
+            self.setFixedSize(300, 300)
 
         self.setWindowTitle('About Photo Manager')
 
@@ -350,9 +362,19 @@ class AboutWindow(QWidget):
         self.imageLabel.setPixmap(self.logoImage)
         self.imageLabel.setAlignment(Qt.AlignCenter)
 
+        # Get OS Text
+        if (platform.system() == "Windows"):
+            osInfo = "Windows"
+        elif (platform.system() == "Darwin"):
+            osInfo = "macOS"
+        elif (platform.system() == "Linux"):
+            osInfo = "Linux"
+        else:
+            osInfo = "Unknown OS"
+
         # Create Text Field Titles
-        self.versionLabel = QLabel("Version 1.1")
-        self.copyrightLabel = QLabel("<a href='https://matthewgallant.me'>\u00A9 2019 Matthew Gallant</a>")
+        self.versionLabel = QLabel("Version 1.2 (" + osInfo + ")")
+        self.copyrightLabel = QLabel("<a href='https://matthewgallant.me'>\u00A9 2020 Matthew Gallant</a>")
 
         self.versionLabel.setAlignment(Qt.AlignCenter)
         self.copyrightLabel.setAlignment(Qt.AlignCenter)
