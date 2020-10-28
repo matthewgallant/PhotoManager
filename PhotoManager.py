@@ -338,8 +338,6 @@ class AboutWindow(QWidget):
             palette.setColor(self.backgroundRole(), Qt.white)
             self.setPalette(palette)
             self.setFixedSize(400, 550)
-        elif (platform.system() == "Darwin"):
-            self.setFixedSize(300, 375)
         else:
             self.setFixedSize(300, 300)
 
