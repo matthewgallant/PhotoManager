@@ -1,6 +1,7 @@
 ## Version 1.2
  - Fixed Bug in Linux Which Caused Issues with the MenuBar
  - Tidied The About Screen Up
+ - Removed macOS Dark Mode Due to PyInstaller Bug
 
 ## Version 1.1
  - Fixed File Save Bug Which Caused Crashing
