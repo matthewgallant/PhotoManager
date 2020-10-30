@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['PhotoManager.py'],
-             pathex=['/Users/matt/Desktop/PhotoManager'],
+             pathex=['/Users/matt/Projects/PhotoManager'],
              binaries=[],
              datas=[],
              hiddenimports=[],
@@ -37,6 +37,5 @@ app = BUNDLE(exe,
              bundle_identifier='me.matthewgallant.photomanager',
              info_plist={
              'NSPrincipalClass': 'NSApplication',
-             'NSRequiresAquaSystemAppearance': False,
-             'CFBundleShortVersionString': '1.1'
+             'CFBundleShortVersionString': '1.2'
             })
