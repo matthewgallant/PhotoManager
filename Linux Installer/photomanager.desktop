@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Type=Application
+Terminal=false
+Exec=/usr/bin/photomanager
+Name=PhotoManager
+Comment=A simple way to comb through large photo sets.
+Categories=Graphics;
+Icon=/usr/share/pixmaps/photomanager.png
