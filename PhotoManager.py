@@ -174,13 +174,28 @@ class PhotoCollectorMain(QMainWindow):
             for image in jpegs:
                 self.allImages.append(image)
 
+            # Collect JPEGs
+            jpegs = glob.glob(folderName + "/*.JPEG")
+            for image in jpegs:
+                self.allImages.append(image)
+
             # Collect JPGs
             jpgs = glob.glob(folderName + "/*.jpg")
             for image in jpgs:
                 self.allImages.append(image)
 
+            # Collect JPGs
+            jpgs = glob.glob(folderName + "/*.JPG")
+            for image in jpgs:
+                self.allImages.append(image)
+
             # Collect PNGs
             pngs = glob.glob(folderName + "/*.png")
+            for image in pngs:
+                self.allImages.append(image)
+
+            # Collect PNGs
+            pngs = glob.glob(folderName + "/*.PNG")
             for image in pngs:
                 self.allImages.append(image)
 
